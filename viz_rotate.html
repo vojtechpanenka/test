@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>dovizovic.cz – rotovaný náhled</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 1280px;   /* vizuální šířka = původní výška */
+    height: 720px;   /* vizuální výška = původní šířka */
+    overflow: hidden;
+  }
+
+  .stage {
+    width: 720px;
+    height: 1280px;
+    position: absolute;
+    /* střed stage = střed výsledného viewportu */
+    top:  calc((720px - 1280px) / 2);   /* -280px */
+    left: calc((1280px - 720px) / 2);   /* +280px */
+    transform: rotate(90deg);
+    transform-origin: center center;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  .home-link {
+    position: fixed;
+    top: 16px;
+    right: 116px;
+    z-index: 9999;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  .home-link:hover {
+    opacity: 1;
+  }
+  .home-link svg {
+    transform: rotate(90deg);
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<a class="home-link" href="https://vojtechpanenka.github.io/test/viz_rotate.html" title="Domů">
+  <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 4L32 16V32H23V23H13V32H4V16L18 4Z" fill="black" fill-opacity="0.15" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M18 4L32 16" stroke="black" stroke-width="2" stroke-linecap="round"/>
+    <path d="M4 16L18 4" stroke="black" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+</a>
+<div class="stage">
+  <iframe
+    src="https://dovizovic.cz/"
+    title="dovizovic.cz"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+    loading="lazy"
+  ></iframe>
+</div>
+</body>
+</html>
