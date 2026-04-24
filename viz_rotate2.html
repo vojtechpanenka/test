@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>dovizovic.cz – rotovaný náhled</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 1920px;   /* vizuální šířka = původní výška */
+    height: 1080px;   /* vizuální výška = původní šířka */
+    overflow: hidden;
+  }
+
+  .stage {
+    width: 720px;
+    height: 1280px;
+    position: absolute;
+    /* střed stage = střed výsledného viewportu */
+    top:  calc((1080px - 1920px) / 2);   /* -280px */
+    left: calc((1920px - 1080px) / 2);   /* +280px */
+    transform: rotate(90deg);
+    transform-origin: center center;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  #overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  #overlay.hidden {
+    display: none;
+  }
+  #overlay.alert {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  #overlay-circle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(180, 180, 180, 0.25);
+    border: 2px solid #bbb;
+    color: #bbb;
+    font-size: 16px;
+    font-family: sans-serif;
+    font-weight: 400;
+    pointer-events: none;
+    transform: rotate(90deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  #overlay-alert-text {
+    display: none;
+    color: #555;
+    font-size: 28px;
+    font-family: sans-serif;
+    font-weight: 500;
+    pointer-events: none;
+    transform: rotate(90deg);
+    white-space: nowrap;
+  }
+  #overlay.alert #overlay-alert-text {
+    display: block;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <iframe
+    id="frame"
+    src="https://dovizovic.cz/"
+    title="dovizovic.cz"
+    sandbox="allow-scripts allow-same-origin allow-forms"
+    loading="lazy"
+  ></iframe>
+</div>
+
+<div id="overlay">
+  <div id="overlay-alert-text">Jsi tu ještě? Klikni.</div>
+  <div id="overlay-circle">60</div>
+</div>
+
+<script>
+  const frame = document.getElementById('frame');
+  const overlay = document.getElementById('overlay');
+  const circleEl = document.getElementById('overlay-circle');
+
+  const REFRESH_TIMEOUT = 40000;
+  const OVERLAY_SHOW_AFTER = 30000;
+
+  let refreshTimer = null;
+  let overlayShowTimer = null;
+  let countdownInterval = null;
+  let refreshAt = null;
+
+  function startRefreshTimer() {
+    clearTimeout(refreshTimer);
+    refreshAt = Date.now() + REFRESH_TIMEOUT;
+    refreshTimer = setTimeout(() => {
+      frame.src = frame.src;
+      showCountdown();
+      startRefreshTimer();
+    }, REFRESH_TIMEOUT);
+  }
+
+  function startCountdown() {
+    clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((refreshAt - Date.now()) / 1000));
+      circleEl.textContent = remaining;
+    }, 500);
+  }
+
+  function showCountdown() {
+    overlay.classList.remove('hidden', 'alert');
+    startCountdown();
+    clearTimeout(overlayShowTimer);
+  }
+
+  function showAlert() {
+    overlay.classList.remove('hidden');
+    overlay.classList.add('alert');
+    startCountdown();
+    clearTimeout(overlayShowTimer);
+  }
+
+  function hideOverlay() {
+    overlay.classList.add('hidden');
+    overlay.classList.remove('alert');
+    clearInterval(countdownInterval);
+    clearTimeout(overlayShowTimer);
+    overlayShowTimer = setTimeout(showAlert, OVERLAY_SHOW_AFTER);
+  }
+
+  overlay.addEventListener('click', () => {
+    startRefreshTimer();
+    hideOverlay();
+  });
+
+  overlay.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startRefreshTimer();
+    hideOverlay();
+  }, { passive: false });
+
+  startRefreshTimer();
+  showCountdown();
+</script>
+</body>
+</html>
