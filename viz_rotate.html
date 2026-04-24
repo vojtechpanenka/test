@@ -37,21 +37,29 @@
     z-index: 9999;
     background: transparent;
     display: flex;
-    flex-direction: column;
     align-items: flex-end;
-    justify-content: center;
+    justify-content: flex-end;
     cursor: pointer;
+    padding: 20px;
   }
   #overlay.hidden {
     display: none;
   }
   #overlay-text {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(180, 180, 180, 0.25);
+    border: 2px solid #bbb;
     color: #bbb;
-    font-size: 22px;
+    font-size: 16px;
     font-family: sans-serif;
     font-weight: 400;
     pointer-events: none;
     transform: rotate(90deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     white-space: nowrap;
   }
 
@@ -70,7 +78,7 @@
 </div>
 
 <div id="overlay">
-  <div id="overlay-text">Obnovení stránky za … s</div>
+  <div id="overlay-text">60</div>
 </div>
 
 <script>
@@ -78,8 +86,8 @@
   const overlay = document.getElementById('overlay');
   const textEl = document.getElementById('overlay-text');
 
-  const REFRESH_TIMEOUT = 60000;
-  const OVERLAY_SHOW_AFTER = 40000;
+  const REFRESH_TIMEOUT = 40000;
+  const OVERLAY_SHOW_AFTER = 20000;
 
   let refreshTimer = null;
   let overlayShowTimer = null;
@@ -100,7 +108,7 @@
     clearInterval(countdownInterval);
     countdownInterval = setInterval(() => {
       const remaining = Math.max(0, Math.ceil((refreshAt - Date.now()) / 1000));
-      textEl.textContent = 'Obnovení stránky za ' + remaining + ' s';
+      textEl.textContent = remaining;
     }, 500);
   }
 
