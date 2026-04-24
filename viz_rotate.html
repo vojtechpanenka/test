@@ -21,14 +21,6 @@
     /* Celý stage otočíme o 90° — výsledná vizuální plocha bude 1920×1080 px */
     transform: rotate(90deg);
     transform-origin: center center;
-
-    /*
-      Po rotaci o 90° potřebujeme posunout stage tak,
-      aby byl viditelný ve středu obrazovky.
-      Vizuální šířka se stane 1920, výška 1080 — kompenzujeme offset.
-    */
-    margin: auto;
-    /*margin: calc((720px - 1280px) / 2) calc((1280px - 720px) / 2);*/
   }
 
   iframe {
