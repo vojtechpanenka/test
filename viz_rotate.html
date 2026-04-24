@@ -13,8 +13,8 @@
 
   /* Wrapper drží původní rozměry 1080×1920 a ořezává přetok */
   .stage {
-    width: 500px;
-    height: 1200px;
+    width: 1000px;
+    height: 1500px;
     overflow: hidden;
     position: relative;
 
@@ -27,7 +27,7 @@
       aby byl viditelný ve středu obrazovky.
       Vizuální šířka se stane 1920, výška 1080 — kompenzujeme offset.
     */
-    margin: calc((500px - 1200px) / 2) calc((1200px - 500px) / 2);
+    margin: calc((1000px - 1500px) / 2) calc((1500px - 1000px) / 2);
   }
 
   iframe {
@@ -35,16 +35,6 @@
     height: 100%;
     border: none;
     display: block;
-  }
-
-  .overlay-label {
-    position: absolute;
-    bottom: 12px;
-    right: 16px;
-    font-size: 11px;
-    color: #444;
-    letter-spacing: 0.08em;
-    pointer-events: none;
   }
 </style>
 </head>
@@ -57,7 +47,6 @@
     sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
     loading="lazy"
   ></iframe>
-  <div class="overlay-label">1080 × 1920 px</div>
 </div>
 
 </body>
