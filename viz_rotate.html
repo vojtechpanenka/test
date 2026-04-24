@@ -8,7 +8,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    min-height: 50vh;
+    min-height: 100vh;
   }
 
   /* Wrapper drží původní rozměry 1080×1920 a ořezává přetok */
@@ -27,7 +27,8 @@
       aby byl viditelný ve středu obrazovky.
       Vizuální šířka se stane 1920, výška 1080 — kompenzujeme offset.
     */
-    margin: calc((720px - 1280px) / 2) calc((1280px - 720px) / 2);
+    margin: auto;
+    /*margin: calc((720px - 1280px) / 2) calc((1280px - 720px) / 2);*/
   }
 
   iframe {
