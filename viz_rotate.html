@@ -37,15 +37,21 @@
     z-index: 9999;
     background: transparent;
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    padding: 20px;
+    transition: background 0.3s;
   }
   #overlay.hidden {
     display: none;
   }
-  #overlay-text {
+  #overlay.alert {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  #overlay-circle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
     width: 56px;
     height: 56px;
     border-radius: 50%;
@@ -60,7 +66,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+  }
+  #overlay-alert-text {
+    display: none;
+    color: #555;
+    font-size: 28px;
+    font-family: sans-serif;
+    font-weight: 500;
+    pointer-events: none;
+    transform: rotate(90deg);
     white-space: nowrap;
+  }
+  #overlay.alert #overlay-alert-text {
+    display: block;
   }
 
 </style>
@@ -78,16 +97,17 @@
 </div>
 
 <div id="overlay">
-  <div id="overlay-text">60</div>
+  <div id="overlay-alert-text">Jsi tu ještě? Klikni.</div>
+  <div id="overlay-circle">60</div>
 </div>
 
 <script>
   const frame = document.getElementById('frame');
   const overlay = document.getElementById('overlay');
-  const textEl = document.getElementById('overlay-text');
+  const circleEl = document.getElementById('overlay-circle');
 
-  const REFRESH_TIMEOUT = 40000;
-  const OVERLAY_SHOW_AFTER = 20000;
+  const REFRESH_TIMEOUT = 60000;
+  const OVERLAY_SHOW_AFTER = 40000;
 
   let refreshTimer = null;
   let overlayShowTimer = null;
@@ -99,7 +119,7 @@
     refreshAt = Date.now() + REFRESH_TIMEOUT;
     refreshTimer = setTimeout(() => {
       frame.src = frame.src;
-      showOverlay();
+      showCountdown();
       startRefreshTimer();
     }, REFRESH_TIMEOUT);
   }
@@ -108,21 +128,29 @@
     clearInterval(countdownInterval);
     countdownInterval = setInterval(() => {
       const remaining = Math.max(0, Math.ceil((refreshAt - Date.now()) / 1000));
-      textEl.textContent = remaining;
+      circleEl.textContent = remaining;
     }, 500);
   }
 
-  function showOverlay() {
+  function showCountdown() {
+    overlay.classList.remove('hidden', 'alert');
+    startCountdown();
+    clearTimeout(overlayShowTimer);
+  }
+
+  function showAlert() {
     overlay.classList.remove('hidden');
+    overlay.classList.add('alert');
     startCountdown();
     clearTimeout(overlayShowTimer);
   }
 
   function hideOverlay() {
     overlay.classList.add('hidden');
+    overlay.classList.remove('alert');
     clearInterval(countdownInterval);
     clearTimeout(overlayShowTimer);
-    overlayShowTimer = setTimeout(showOverlay, OVERLAY_SHOW_AFTER);
+    overlayShowTimer = setTimeout(showAlert, OVERLAY_SHOW_AFTER);
   }
 
   overlay.addEventListener('click', () => {
@@ -137,7 +165,7 @@
   }, { passive: false });
 
   startRefreshTimer();
-  showOverlay();
+  showCountdown();
 </script>
 </body>
 </html>
