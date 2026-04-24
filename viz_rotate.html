@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>dovizovic.cz – rotovaný náhled</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 1280px;   /* vizuální šířka = původní výška */
+    height: 720px;   /* vizuální výška = původní šířka */
+    overflow: hidden;
+  }
+
+  .stage {
+    width: 720px;
+    height: 1280px;
+    position: absolute;
+    /* střed stage = střed výsledného viewportu */
+    top:  calc((720px - 1280px) / 2);   /* -280px */
+    left: calc((1280px - 720px) / 2);   /* +280px */
+    transform: rotate(90deg);
+    transform-origin: center center;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  #overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    cursor: pointer;
+  }
+  #overlay.hidden {
+    display: none;
+  }
+  #overlay-text {
+    color: #bbb;
+    font-size: 22px;
+    font-family: sans-serif;
+    font-weight: 400;
+    pointer-events: none;
+    transform: rotate(90deg);
+    white-space: nowrap;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <iframe
+    id="frame"
+    src="https://dovizovic.cz/"
+    title="dovizovic.cz"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+    loading="lazy"
+  ></iframe>
+</div>
+
+<div id="overlay">
+  <div id="overlay-text">Obnovení stránky za … s</div>
+</div>
+
+<script>
+  const frame = document.getElementById('frame');
+  const overlay = document.getElementById('overlay');
+  const textEl = document.getElementById('overlay-text');
+
+  const REFRESH_TIMEOUT = 60000;
+  const OVERLAY_SHOW_AFTER = 40000;
+
+  let refreshTimer = null;
+  let overlayShowTimer = null;
+  let countdownInterval = null;
+  let refreshAt = null;
+
+  function startRefreshTimer() {
+    clearTimeout(refreshTimer);
+    refreshAt = Date.now() + REFRESH_TIMEOUT;
+    refreshTimer = setTimeout(() => {
+      frame.src = frame.src;
+      showOverlay();
+      startRefreshTimer();
+    }, REFRESH_TIMEOUT);
+  }
+
+  function startCountdown() {
+    clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((refreshAt - Date.now()) / 1000));
+      textEl.textContent = 'Obnovení stránky za ' + remaining + ' s';
+    }, 500);
+  }
+
+  function showOverlay() {
+    overlay.classList.remove('hidden');
+    startCountdown();
+    clearTimeout(overlayShowTimer);
+  }
+
+  function hideOverlay() {
+    overlay.classList.add('hidden');
+    clearInterval(countdownInterval);
+    clearTimeout(overlayShowTimer);
+    overlayShowTimer = setTimeout(showOverlay, OVERLAY_SHOW_AFTER);
+  }
+
+  overlay.addEventListener('click', () => {
+    startRefreshTimer();
+    hideOverlay();
+  });
+
+  overlay.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startRefreshTimer();
+    hideOverlay();
+  }, { passive: false });
+
+  startRefreshTimer();
+  showOverlay();
+</script>
+</body>
+</html>
