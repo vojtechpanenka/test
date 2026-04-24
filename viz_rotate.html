@@ -13,8 +13,8 @@
 
   /* Wrapper drží původní rozměry 1080×1920 a ořezává přetok */
   .stage {
-    width: 1080px;
-    height: 1080px;
+    width: 720px;
+    height: 1280px;
     overflow: hidden;
     position: relative;
 
@@ -27,7 +27,7 @@
       aby byl viditelný ve středu obrazovky.
       Vizuální šířka se stane 1920, výška 1080 — kompenzujeme offset.
     */
-    margin: 0;/*calc((900px - 1600px) / 2) calc((1600px - 900px) / 2);*/
+    margin: calc((720px - 1280px) / 2) calc((1280px - 720px) / 2);
   }
 
   iframe {
